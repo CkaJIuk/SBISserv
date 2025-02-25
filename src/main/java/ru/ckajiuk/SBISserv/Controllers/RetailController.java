@@ -2,11 +2,10 @@ package ru.ckajiuk.SBISserv.Controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.ckajiuk.SBISserv.DTO.OrderCreateDTO;
 import ru.ckajiuk.SBISserv.DTO.PriceListDTO;
 import ru.ckajiuk.SBISserv.DTO.ProductDTO;
 import ru.ckajiuk.SBISserv.DTO.SalePointDTO;
@@ -37,7 +36,7 @@ public class RetailController {
     @GetMapping("/nomenclature/price-list")
     @Operation(summary = "Получить список прайс-листов")
     ResponseEntity<PriceListDTO> getPriceLists(@RequestParam(required = true, name = "pointId") Integer pointId,
-                                               @RequestParam(required = true, name = "actualDate") Date date,
+                                               @RequestParam(required = true, name = "actualDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
                                                @RequestParam(required = false, defaultValue = "1", name = "page") Integer page) {
         if (pointId == 1) {
             List<PriceList> lst = new ArrayList<>();
@@ -61,5 +60,11 @@ public class RetailController {
             return ResponseEntity.ok(new ProductDTO(lst, 1, false));
         }
         return ResponseEntity.ok(new ProductDTO(null, 1, false));
+    }
+
+    @PostMapping("/order/create")
+    @Operation(summary = "Создать заказ")
+    ResponseEntity<String> createOrder(@RequestBody OrderCreateDTO order) {
+        return ResponseEntity.ok("order created");
     }
 }

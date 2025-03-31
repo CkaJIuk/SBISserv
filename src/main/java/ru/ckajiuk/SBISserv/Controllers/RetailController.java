@@ -2,6 +2,7 @@ package ru.ckajiuk.SBISserv.Controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import ru.ckajiuk.SBISserv.DTO.SalePointDTO;
 import ru.ckajiuk.SBISserv.Entities.PriceList;
 import ru.ckajiuk.SBISserv.Entities.Product;
 import ru.ckajiuk.SBISserv.Entities.SalePoint;
+import ru.ckajiuk.SBISserv.Repositories.MongoRepo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,13 +24,19 @@ import java.util.List;
 @RequestMapping("/retail")
 public class RetailController {
 
+    @Autowired
+    private MongoRepo mongoRepo;
+
     @GetMapping("/point/list")
     @Operation(summary = "Получить список точек продаж")
     ResponseEntity<SalePointDTO> getPointList(@RequestParam(required = false, name = "product") String product,
                                               @RequestParam(required = false, name = "withPhones", defaultValue = "false") boolean withPhones) {
-        List<SalePoint> lst = new ArrayList<>();
-        lst.add(new SalePoint(1, "Добрый", "555-555", "ул. Туполева"));
-        lst.add(new SalePoint(2, "Березка", "333-333", "ул. Антонова"));
+
+        /*List<SalePoint> lst = new ArrayList<>();
+        /lst.add(new SalePoint(1, "Добрый", "555-555", "ул. Туполева"));
+        /lst.add(new SalePoint(2, "Березка", "333-333", "ул. Антонова"));*/
+
+        List<SalePoint> lst = mongoRepo.findAll();
 
         return ResponseEntity.ok(new SalePointDTO(lst, 1, false));
     }

@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: SBISserv
+  data:
+    mongodb:
+      authentication-database: admin
+      username: admin
+      password: adm1n
+      database: sbis_db
+      host: localhost
+      port: 27017
+rsa:
+  private-key: classpath:private.key
+  public-key: classpath:public.key
+

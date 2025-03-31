@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(description = "Обект для отправки refresh token")
+@Schema(description = "Объект для отправки refresh token")
 public class TokenRequestDTO {
     private String refreshToken;
 }

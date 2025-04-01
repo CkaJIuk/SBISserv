@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @Schema(description = "Объект аутентификации")
 public class LoginRequestDTO {
-    @Schema(description = "Логин приложения", example = "user")
-    private String username;
-    @Schema(description = "Пароль в кодировке bcrypt", example = "user")
-    private String password;
+    @Schema(description = "Имя клиента", example = "u123456")
+    private String clientName;
+    @Schema(description = "Ключ доступа в кодировке bcrypt", example = "$2a$10$IKOFdQ6sXBDieTb5I6FNJ.JgxJTRxqkJ17IpmtSd9JIu5/JTWkJ7e")
+    private String clientSecret;
 }

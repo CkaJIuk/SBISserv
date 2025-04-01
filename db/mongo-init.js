@@ -1,3 +1,10 @@
+db.createCollection("clients")
+db.clients.insertMany(
+[{
+  "clientName": "u123456",
+  "clientSecret": "$2a$10$IKOFdQ6sXBDieTb5I6FNJ.JgxJTRxqkJ17IpmtSd9JIu5/JTWkJ7e"
+}]
+)
 db.createCollection("points")
 db.points.insertMany(
 [{

@@ -13,7 +13,7 @@ import ru.ckajiuk.SBISserv.DTO.SalePointDTO;
 import ru.ckajiuk.SBISserv.Entities.PriceList;
 import ru.ckajiuk.SBISserv.Entities.Product;
 import ru.ckajiuk.SBISserv.Entities.SalePoint;
-import ru.ckajiuk.SBISserv.Repositories.MongoRepo;
+import ru.ckajiuk.SBISserv.Repositories.SalePointsRepo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,7 +25,7 @@ import java.util.List;
 public class RetailController {
 
     @Autowired
-    private MongoRepo mongoRepo;
+    private SalePointsRepo salePointsRepo;
 
     @GetMapping("/point/list")
     @Operation(summary = "Получить список точек продаж")
@@ -36,7 +36,7 @@ public class RetailController {
         /lst.add(new SalePoint(1, "Добрый", "555-555", "ул. Туполева"));
         /lst.add(new SalePoint(2, "Березка", "333-333", "ул. Антонова"));*/
 
-        List<SalePoint> lst = mongoRepo.findAll();
+        List<SalePoint> lst = salePointsRepo.findAll();
 
         return ResponseEntity.ok(new SalePointDTO(lst, 1, false));
     }

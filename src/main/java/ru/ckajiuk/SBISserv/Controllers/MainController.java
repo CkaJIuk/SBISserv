@@ -23,9 +23,9 @@ public class MainController {
     @PostMapping("/auth/login")
     @Operation(summary = "Авторизация")
     ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO request) {
-        if (authService.verifyPassword(request.getUsername(), request.getPassword())) {
-            String accessToken = jwtService.generateAccessToken(request.getUsername());
-            String refreshToken = jwtService.generateRefreshToken(request.getUsername());
+        if (authService.verifyPassword(request.getClientName(), request.getClientSecret())) {
+            String accessToken = jwtService.generateAccessToken(request.getClientName());
+            String refreshToken = jwtService.generateRefreshToken(request.getClientSecret());
             return ResponseEntity.ok(new AuthResponseDTO(accessToken, refreshToken, "ok"));
         } else return ResponseEntity.ok(new AuthResponseDTO("", "", "invalid login/password"));
     }

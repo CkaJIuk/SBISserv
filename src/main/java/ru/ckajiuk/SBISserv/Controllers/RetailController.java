@@ -10,14 +10,16 @@ import ru.ckajiuk.SBISserv.DTO.OrderCreateDTO;
 import ru.ckajiuk.SBISserv.DTO.PriceListDTO;
 import ru.ckajiuk.SBISserv.DTO.ProductDTO;
 import ru.ckajiuk.SBISserv.DTO.SalePointDTO;
+import ru.ckajiuk.SBISserv.Entities.Nomenclature;
 import ru.ckajiuk.SBISserv.Entities.PriceList;
-import ru.ckajiuk.SBISserv.Entities.Product;
 import ru.ckajiuk.SBISserv.Entities.SalePoint;
+import ru.ckajiuk.SBISserv.Repositories.NomenclatureRepo;
+import ru.ckajiuk.SBISserv.Repositories.PriceListsRepo;
 import ru.ckajiuk.SBISserv.Repositories.SalePointsRepo;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Tag(name = "Контроллер для точек продаж", description = "Обрабатывает основные запросы к системе SBIS")
@@ -27,14 +29,16 @@ public class RetailController {
     @Autowired
     private SalePointsRepo salePointsRepo;
 
+    @Autowired
+    private PriceListsRepo priceListsRepo;
+
+    @Autowired
+    private NomenclatureRepo nomenclatureRepo;
+
     @GetMapping("/point/list")
     @Operation(summary = "Получить список точек продаж")
     ResponseEntity<SalePointDTO> getPointList(@RequestParam(required = false, name = "product") String product,
                                               @RequestParam(required = false, name = "withPhones", defaultValue = "false") boolean withPhones) {
-
-        /*List<SalePoint> lst = new ArrayList<>();
-        /lst.add(new SalePoint(1, "Добрый", "555-555", "ул. Туполева"));
-        /lst.add(new SalePoint(2, "Березка", "333-333", "ул. Антонова"));*/
 
         List<SalePoint> lst = salePointsRepo.findAll();
 
@@ -46,13 +50,9 @@ public class RetailController {
     ResponseEntity<PriceListDTO> getPriceLists(@RequestParam(required = true, name = "pointId") Integer pointId,
                                                @RequestParam(required = true, name = "actualDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
                                                @RequestParam(required = false, defaultValue = "1", name = "page") Integer page) {
-        if (pointId == 1) {
-            List<PriceList> lst = new ArrayList<>();
-            lst.add(new PriceList(1, "Основной прайс-лист"));
-            lst.add(new PriceList(2, "Прайс-лист на новогодние"));
-            return ResponseEntity.ok(new PriceListDTO(lst, 1, false));
-        }
-        return ResponseEntity.ok(new PriceListDTO(null, 1, false));
+
+        List<PriceList> lst = priceListsRepo.findAll();
+        return ResponseEntity.ok(new PriceListDTO(lst, 1, false));
     }
 
     @GetMapping("/nomenclature/list")
@@ -60,14 +60,10 @@ public class RetailController {
     ResponseEntity<ProductDTO> getProducts(@RequestParam(required = true, name = "pointId") Integer pointId,
                                            @RequestParam(required = true, name = "priceListId") Integer priceListId,
                                            @RequestParam(required = false, defaultValue = "1", name = "page") Integer page) {
-        if (pointId == 1 && priceListId == 1) {
-            List<Product> lst = new ArrayList<>();
-            lst.add(new Product(1, "Твикс", 55, "р.", 100, "url", false));
-            lst.add(new Product(2, "Марс", 57, "р.", 200, "url", false));
-            lst.add(new Product(3, "Баунти", 61, "р.", 50, "url", false));
-            return ResponseEntity.ok(new ProductDTO(lst, 1, false));
-        }
-        return ResponseEntity.ok(new ProductDTO(null, 1, false));
+        Optional<Nomenclature> nom = nomenclatureRepo.findByPointIdAndPriceListId(pointId, priceListId);
+
+        return nom.map(nomenclature -> ResponseEntity.ok(new ProductDTO(nomenclature.getProds(), 1, false)))
+                .orElseGet(() -> ResponseEntity.ok(new ProductDTO(null, 1, false)));
     }
 
     @PostMapping("/order/create")

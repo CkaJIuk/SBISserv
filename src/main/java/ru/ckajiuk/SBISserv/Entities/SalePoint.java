@@ -18,7 +18,7 @@ public class SalePoint {
     private ObjectId _id;
 
     @Schema(description = "Идентификатор")
-    private int id;
+    private Integer id;
     @Schema(description = "Наименование", example = "Алкомаркет")
     private String name;
     @Schema(description = "Номер телефона", example = "+79505555555")

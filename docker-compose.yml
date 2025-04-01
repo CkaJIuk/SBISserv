@@ -3,6 +3,7 @@ version: "3.8"
 services:
   mongodb:
     image: sbis_mongo
+    container_name: sbis_mongo
     restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
@@ -12,14 +13,13 @@ services:
 
   mongo-express:
     image: mongo-express
-    depends_on:
-      - mongodb
+    container_name: mongo-express
     restart: always
     ports:
       - 8111:8081
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=adm1n
-      - ME_CONFIG_BASICAUTH_USERNAME=user
-      - ME_CONFIG_BASICAUTH_PASSWORD=user
+      ME_CONFIG_MONGODB_URL: 'mongodb://admin:adm1n@mongodb:27017'
+      ME_CONFIG_BASICAUTH_USERNAME: user
+      ME_CONFIG_BASICAUTH_PASSWORD: user
+    depends_on:
+      - mongodb

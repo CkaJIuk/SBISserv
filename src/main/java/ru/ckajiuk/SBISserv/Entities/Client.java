@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @AllArgsConstructor
 @Document("clients")
-@Schema(description = "Сущность клиента")
+@Schema(description = "Сущность Клиент")
 public class Client {
     @Id
     private ObjectId _id;

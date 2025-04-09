@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.ckajiuk.SBISserv.DTO.OrderCreateDTO;
-import ru.ckajiuk.SBISserv.DTO.PriceListDTO;
-import ru.ckajiuk.SBISserv.DTO.ProductDTO;
-import ru.ckajiuk.SBISserv.DTO.SalePointDTO;
+import ru.ckajiuk.SBISserv.DTO.*;
 import ru.ckajiuk.SBISserv.Entities.Nomenclature;
+import ru.ckajiuk.SBISserv.Entities.Order;
 import ru.ckajiuk.SBISserv.Entities.PriceList;
 import ru.ckajiuk.SBISserv.Entities.SalePoint;
 import ru.ckajiuk.SBISserv.Repositories.NomenclatureRepo;
+import ru.ckajiuk.SBISserv.Repositories.OrdersRepo;
 import ru.ckajiuk.SBISserv.Repositories.PriceListsRepo;
 import ru.ckajiuk.SBISserv.Repositories.SalePointsRepo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +35,9 @@ public class RetailController {
     @Autowired
     private NomenclatureRepo nomenclatureRepo;
 
+    @Autowired
+    private OrdersRepo ordersRepo;
+
     @GetMapping("/point/list")
     @Operation(summary = "Получить список точек продаж")
     ResponseEntity<SalePointDTO> getPointList(@RequestParam(required = false, name = "product") String product,
@@ -47,8 +50,8 @@ public class RetailController {
 
     @GetMapping("/nomenclature/price-list")
     @Operation(summary = "Получить список прайс-листов")
-    ResponseEntity<PriceListDTO> getPriceLists(@RequestParam(required = true, name = "pointId") Integer pointId,
-                                               @RequestParam(required = true, name = "actualDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+    ResponseEntity<PriceListDTO> getPriceLists(@RequestParam(name = "pointId") Integer pointId,
+                                               @RequestParam(name = "actualDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
                                                @RequestParam(required = false, defaultValue = "1", name = "page") Integer page) {
 
         List<PriceList> lst = priceListsRepo.findAll();
@@ -57,8 +60,8 @@ public class RetailController {
 
     @GetMapping("/nomenclature/list")
     @Operation(summary = "Получить список товаров")
-    ResponseEntity<ProductDTO> getProducts(@RequestParam(required = true, name = "pointId") Integer pointId,
-                                           @RequestParam(required = true, name = "priceListId") Integer priceListId,
+    ResponseEntity<ProductDTO> getProducts(@RequestParam(name = "pointId") Integer pointId,
+                                           @RequestParam(name = "priceListId") Integer priceListId,
                                            @RequestParam(required = false, defaultValue = "1", name = "page") Integer page) {
         Optional<Nomenclature> nom = nomenclatureRepo.findByPointIdAndPriceListId(pointId, priceListId);
 
@@ -68,7 +71,19 @@ public class RetailController {
 
     @PostMapping("/order/create")
     @Operation(summary = "Создать заказ")
-    ResponseEntity<String> createOrder(@RequestBody OrderCreateDTO order) {
-        return ResponseEntity.ok("order created");
+    ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderCreateDTO DTO) {
+        Order order = ordersRepo.insert(Order.createFromDTO(DTO));
+        return ResponseEntity.ok(new OrderResponseDTO("new", order.get_id().toString(), order.getCreationDate(), order.getTotalPrice()));
+    }
+
+    @GetMapping("order/list")
+    @Operation(summary = "Получить список заказов пользователя")
+    ResponseEntity<List<OrderResponseDTO>> getOrdersList(@RequestParam(name = "customerPhone") String customerPhone) {
+        List<Order> orders = ordersRepo.findOrdersByCustomerPhone(customerPhone);
+        List<OrderResponseDTO> ordersDTO = new ArrayList<>();
+        for (Order o : orders) {
+            ordersDTO.add(new OrderResponseDTO(o.getStatus(), o.get_id().toString(), o.getCreationDate(), o.getTotalPrice()));
+        }
+        return ResponseEntity.ok(ordersDTO);
     }
 }

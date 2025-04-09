@@ -38,9 +38,4 @@ class AuthServiceTests {
         assertTrue(authService.verifyPassword("u123456", "$2a$10$IKOFdQ6sXBDieTb5I6FNJ.JgxJTRxqkJ17IpmtSd9JIu5/JTWkJ7e"));
         assertFalse(authService.verifyPassword("u31313", "$2a$10$IKOFdQ6sXBDieTb5I6FNJ.JgxJTRxqkJ17IpmtSd9JIu5/JTWkJ7e"));
     }
-
-    @Test
-    void tokenTest() {
-
-    }
 }

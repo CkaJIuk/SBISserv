@@ -12,7 +12,7 @@ public class JWTService {
     private JwtEncoder encoder;
 
     @Autowired
-    protected JwtDecoder decoder;
+    private JwtDecoder decoder;
 
     private String generateToken(String username, long expired_seconds) {
         Instant now = Instant.now();

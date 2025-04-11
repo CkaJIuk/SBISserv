@@ -10,6 +10,5 @@ spring:
       host: localhost
       port: 27017
 rsa:
-  private-key: classpath:private.key
-  public-key: classpath:public.key
-
+  private-key: /secrets/private.key
+  public-key: /secrets/public.key

@@ -25,7 +25,7 @@ import ru.ckajiuk.SBISserv.Components.RSAKeyProperties;
 public class JWTConfig {
 
     @Autowired
-    RSAKeyProperties rsaKeyProperties;
+    private RSAKeyProperties rsaKeyProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

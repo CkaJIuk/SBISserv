@@ -4,15 +4,24 @@ services:
     container_name: sbis_mongo
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=adm1n
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adm1n
+    networks:
+      - backend
     ports:
       - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://admin:adm1n@mongodb:27017 --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   mongo-express:
     image: mongo-express
     container_name: mongo-express
     restart: always
+    networks:
+      - backend
     ports:
       - 8111:8081
     environment:
@@ -21,3 +30,21 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: user
     depends_on:
       - mongodb
+
+  sbis-server:
+    image: sbis_server
+    container_name: sbis_server
+    restart: always
+    networks:
+      - backend
+    ports:
+      - 8080:8080
+    depends_on:
+      mongodb:
+          condition: service_healthy
+    environment:
+      DB_HOST: mongodb
+
+networks:
+  backend:
+    driver: bridge
